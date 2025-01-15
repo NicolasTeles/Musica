@@ -50,3 +50,10 @@ Melodia* leMelodia(FILE* fp){
     return melodia;
 }
 
+void printaResultado(FILE* fp, int index){
+    if(index == -1)
+        fprintf(fp, "N\n");
+    if(index >= 0)
+        fprintf(fp, "S %d\n", index);
+    
+}

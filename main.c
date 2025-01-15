@@ -4,19 +4,23 @@
 #include "logica.h"
 
 int main(int argc, char* argv[]){
-    FILE* fp = fopen(argv[1], "r");
+    FILE* fe = fopen(argv[1], "r");
+
+    //remover arquivo de saida, mantendo assim para ficar mais organizado e ser possivel debugar pelo terminal
+    FILE* fs = fopen("saida.txt", "w");
     int tipo = atoi(argv[2]);
-    if(fp == NULL){
+    if(fe == NULL){
         printf("Erro na abertura do arquivo de entrada!\n");
         return 0;
     }
     while(1){
-        if(feof(fp))
+        if(feof(fe))
             break;
-        Melodia* melodia = leMelodia(fp);
+        Melodia* melodia = leMelodia(fe);
         if(melodia == NULL)
             break;
         int index  =  forcaBruta(melodia);
+        printaResultado(fs, index);
         printf("%d\n", index);
         for(int i = 0; i < melodia->tamMusica; i++)
             printf("%d ", melodia->musica[i]);
@@ -26,6 +30,7 @@ int main(int argc, char* argv[]){
         printf("\n");
         destroiMelodia(melodia);
     }
-    fclose(fp);
+    fclose(fs);
+    fclose(fe);
     return 0;
 }

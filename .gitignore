@@ -1,0 +1,5 @@
+.vscode
+./vscode
+/.vscode
+*.o
+saida.txt

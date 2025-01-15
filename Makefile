@@ -9,4 +9,4 @@ entradaSaida.o: entradaSaida.h entradaSaida.c
  
 
 clean: 
-	rm -rf *.o tp3
+	rm -rf *.o tp3 saida.txt
