@@ -1,30 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "entradaSaida.h"
 #include "logica.h"
-
-Melodia* obtemTamanhoMelodia(FILE* fp){
-    char string[10];
-    fgets(string, 10, fp);
-    char* token = strtok(string, " ");
-    //printf("str=%s\n", token);
-    int tamanhoMusica = atoi(token);
-    //printf("%d\n", tamanhoMusica);
-    token = strtok(NULL, " ");
-    //printf("str=%s\n", token);
-    int tamanhoPadrao = atoi(token);
-    //printf("ihttps://github.com/NicolasTeles/Musica.gitt=%d\n\n", tamanhoPadrao);
-
-    if(tamanhoMusica == 0 && tamanhoPadrao == 0)
-        return NULL;
-
-    return criaMelodias(tamanhoMusica, tamanhoPadrao);
-}
 
 void leLinha(Melodia* melodia, FILE* fp, int tam, char caracter){
     char string[500];
     fgets(string, 500, fp);
     char* token = strtok(string, " ");
+    melodia->fitaLeitura[0] = 0;
     for(int i = 0; i < tam; i++){
         int nota = converteNota(token[0]);
         if(strlen(token) > 1)
@@ -33,12 +17,18 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caracter){
             if(token[1] == '#')
                 nota++;
 
-        if(caracter == 'm')
+        if(caracter == 'm'){
             melodia->musica[i] = nota;
-        if(caracter == 'p')
+            melodia->fitaLeitura[i+melodia->tamPadrao+2] = nota;
+        }
+        if(caracter == 'p'){
             melodia->padrao[i] = nota;
+            melodia->fitaLeitura[i+1] = nota;
+        }
         token = strtok(NULL, " ");
     }
+    melodia->fitaLeitura[melodia->tamPadrao+1] = -1;
+    melodia->fitaLeitura[melodia->tamFita-1] = 13;
 }
 
 Melodia* leMelodia(FILE* fp){

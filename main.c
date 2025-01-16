@@ -19,7 +19,10 @@ int main(int argc, char* argv[]){
         Melodia* melodia = leMelodia(fe);
         if(melodia == NULL)
             break;
-        int index  =  forcaBruta(melodia);
+        for(int i = 0; i < melodia->tamFita; i++)
+            printf("%d ", melodia->fitaLeitura[i]);
+        printf("\n\n\n");
+        int index = KMP(melodia);
         printaResultado(fs, index);
         printf("%d\n", index);
         for(int i = 0; i < melodia->tamMusica; i++)

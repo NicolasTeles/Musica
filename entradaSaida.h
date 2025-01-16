@@ -3,7 +3,6 @@
 
 #include "logica.h"
 
-Melodia* obtemTamanhoMelodia(FILE* fp);
 
 void leLinha(Melodia* melodia, FILE* fp, int tam, char caracter);
 

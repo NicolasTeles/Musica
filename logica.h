@@ -13,13 +13,24 @@
     G = 11
 }Notas;*/
 
+/*
+    0 -> # : caracter de inicio
+    -1 -> $ : parar de empilhar
+    13 -> φ : fim do texto
+*/
+
 typedef struct melodia{
+    int* fitaLeitura;
+    int tamFita;
+    
     int* musica;
     int tamMusica;
     int* padrao;
     int tamPadrao;
 }Melodia;
 
+
+Melodia* obtemTamanhoMelodia(FILE* fp);
 
 int converteNota(char nota);
 
@@ -30,5 +41,7 @@ void destroiMelodia(Melodia* m);
 int forcaBruta(Melodia* melodia);
 
 int distanciaMin(int diff);
+
+int KMP(Melodia* melodia);
 
 #endif
