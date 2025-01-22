@@ -56,13 +56,12 @@ Melodia* criaMelodias(int tamMusica, int tamPadrao){
     m->padrao = (int*)calloc(tamPadrao, sizeof(int));
     m->tamPadrao = tamPadrao;
 
-    m->tamFita = 3 + tamMusica + tamPadrao;
-    m->fitaLeitura = (int*)calloc(m->tamFita, sizeof(int));
+    m->LPS = (int*)calloc(tamPadrao, sizeof(int));
     return m;
 }
 
 void destroiMelodia(Melodia* m){
-    free(m->fitaLeitura);
+    free(m->LPS);
     free(m->musica);
     free(m->padrao);
     free(m);
@@ -91,43 +90,55 @@ int forcaBruta(Melodia* melodia){
     return -1;
 }
 
-int KMP(Melodia* melodia){
-    int index = 0;
-    int diferenca;
-    int retorno = -1;
+void criaLPS(Melodia* melodia){
+    if(melodia == NULL)
+        return;
+    melodia->LPS[0] = 0;
+    int len = 0;
 
-    int* pilha = (int*)calloc(melodia->tamPadrao, sizeof(int));
-    for(int i = 0; i < melodia->tamFita; i++){
-        if(melodia->fitaLeitura[i] == 0)
-            continue;
-        if(melodia->fitaLeitura[i] == -1)
-            break;
-        
-        pilha[i-1] = melodia->fitaLeitura[i];
-    }
-    
-    for(int i = melodia->tamFita-1; ; i--){
-        if(melodia->fitaLeitura[i] == 13)
-            continue;
-        if(melodia->fitaLeitura[i] == -1)
-            break;
-        if(index == 0){
-            diferenca = distanciaMin(melodia->fitaLeitura[i] - pilha[melodia->tamPadrao - 1]);
-            index++;
-            continue;
-        }
-        if(diferenca != distanciaMin(melodia->fitaLeitura[i] - pilha[melodia->tamPadrao - (index + 1)])){
-            index = 1;
-            diferenca = distanciaMin(melodia->fitaLeitura[i] - pilha[melodia->tamPadrao - 1]);
+    int i = 1;
+    while(i < melodia->tamPadrao){
+        if(melodia->padrao[i] == melodia->padrao[len]){
+            len++;
+            melodia->LPS[i] = len;
+            i++;
             continue;
         }else{
-            index++;
-            if(index == melodia->tamPadrao){
-                retorno = (i - melodia->tamPadrao - 2);
-                break;
+            if(len != 0){
+                len = melodia->LPS[len-1];
+                continue;
+            } else {
+                melodia->LPS[i] = 0;
+                i++;
+                continue;
             }
         }
     }
-    free(pilha);
-    return retorno;
+}
+
+int KMP(Melodia* melodia){
+    criaLPS(melodia);
+    
+    int i = 0, j = 0, posCasamento = -1;
+    int diferenca = distanciaMin(melodia->musica[0] - melodia->padrao[0]);
+    while(i < melodia->tamMusica){
+        if(j == melodia->tamPadrao)
+            return posCasamento - (melodia->tamPadrao - 1);
+        int diferencaAtual = distanciaMin(melodia->musica[i] - melodia->padrao[j]);
+        if(diferenca == diferencaAtual){
+            posCasamento = i;
+            i++;
+            j++;
+            continue;
+        } else {
+            if(j != 0){
+                j = melodia->LPS[j-1];
+            } else {
+                posCasamento = -1;
+                i++;
+                diferenca = distanciaMin(melodia->musica[i] - melodia->padrao[j]);
+            }
+        }
+    }
+    return -1;
 }

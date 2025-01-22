@@ -19,10 +19,16 @@ int main(int argc, char* argv[]){
         Melodia* melodia = leMelodia(fe);
         if(melodia == NULL)
             break;
-        for(int i = 0; i < melodia->tamFita; i++)
-            printf("%d ", melodia->fitaLeitura[i]);
         printf("\n\n\n");
         int index = KMP(melodia);
+
+
+        printf("LPS = ");
+
+        for(int i = 0; i < melodia->tamPadrao; i++)
+            printf("%d ", melodia->LPS[i]);
+        printf("\n");
+
         printaResultado(fs, index);
         printf("%d\n", index);
         for(int i = 0; i < melodia->tamMusica; i++)
@@ -31,6 +37,8 @@ int main(int argc, char* argv[]){
         for(int i = 0; i < melodia->tamPadrao; i++)
             printf("%d ", melodia->padrao[i]);
         printf("\n");
+
+
         destroiMelodia(melodia);
     }
     fclose(fs);

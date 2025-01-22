@@ -21,10 +21,6 @@
 
 typedef struct melodia{
     int* LPS;
-
-    //apagar isso dps
-    int* fitaLeitura;
-    int tamFita;
     
     int* musica;
     int tamMusica;
@@ -44,6 +40,8 @@ void destroiMelodia(Melodia* m);
 int forcaBruta(Melodia* melodia);
 
 int distanciaMin(int diff);
+
+void criaLPS(Melodia* melodia);
 
 int KMP(Melodia* melodia);
 
