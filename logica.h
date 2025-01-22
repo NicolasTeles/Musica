@@ -20,6 +20,9 @@
 */
 
 typedef struct melodia{
+    int* LPS;
+
+    //apagar isso dps
     int* fitaLeitura;
     int tamFita;
     
