@@ -18,9 +18,13 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caracter){
 
         if(caracter == 'm'){
             melodia->musica[i] = nota;
+            if(i > 0)
+                melodia->intervalosMusica[i-1] = distanciaMin(melodia->musica[i] - melodia->musica[i]);
         }
         if(caracter == 'p'){
             melodia->padrao[i] = nota;
+            if(i > 0)
+                melodia->intervalosPadrao[i-1] = distanciaMin(melodia->padrao[i] - melodia->padrao[i]);
         }
         token = strtok(NULL, " ");
     }

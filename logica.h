@@ -13,13 +13,13 @@
     G = 11
 }Notas;*/
 
-/*
-    0 -> # : caracter de inicio
-    -1 -> $ : parar de empilhar
-    13 -> φ : fim do texto
-*/
-
 typedef struct melodia{
+    //BMH
+    int* intervalosMusica;
+    int* intervalosPadrao;
+    int* mascara;
+    
+    //KMP
     int* LPS;
     
     int* musica;

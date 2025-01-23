@@ -55,12 +55,25 @@ Melodia* criaMelodias(int tamMusica, int tamPadrao){
     m->padrao = (int*)calloc(tamPadrao, sizeof(int));
     m->tamPadrao = tamPadrao;
 
+    //KMP
     m->LPS = (int*)calloc(tamPadrao, sizeof(int));
+
+    //BMH
+    m->intervalosPadrao = (int*)calloc(tamPadrao-1, sizeof(int));
+    m->intervalosMusica = (int*)calloc(tamMusica-1, sizeof(int));
+    m->mascara = (int*)calloc(12, sizeof(int));
     return m;
 }
 
 void destroiMelodia(Melodia* m){
+    //KMP
     free(m->LPS);
+
+    //BMH
+    free(m->intervalosPadrao);
+    free(m->intervalosMusica);
+    free(m->mascara);
+
     free(m->musica);
     free(m->padrao);
     free(m);
