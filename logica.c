@@ -45,7 +45,6 @@ int converteNota(char nota) {
 //problema de ser tudo forca bruta, tem q olhar com monitor
 int distanciaMin(int diff){
     int absDiff = abs(diff);
-    printf("diff=%d\tabs=%d\tsubtracao=%d\n", diff, absDiff, 12-absDiff);
     return absDiff < 12-absDiff ? diff : -1*(12-absDiff);
 } 
 
@@ -133,6 +132,8 @@ int KMP(Melodia* melodia){
         } else {
             if(j != 0){
                 j = melodia->LPS[j-1];
+                if(j == 0)
+                    diferenca = distanciaMin(melodia->musica[i] - melodia->padrao[j]);
             } else {
                 posCasamento = -1;
                 i++;
@@ -140,5 +141,10 @@ int KMP(Melodia* melodia){
             }
         }
     }
+    return -1;
+}
+
+int BMH(Melodia* melodia){
+    
     return -1;
 }
