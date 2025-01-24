@@ -41,11 +41,14 @@ int converteNota(char nota) {
     }
 }
 
-
-//problema de ser tudo forca bruta, tem q olhar com monitor
 int distanciaMin(int diff){
     int absDiff = abs(diff);
-    return absDiff < 12-absDiff ? diff : -1*(12-absDiff);
+    int multiplicador;
+    if(diff < 0)
+        multiplicador = 1;
+    else
+        multiplicador = -1;
+    return absDiff < 12-absDiff ? diff : multiplicador*(12-absDiff);
 } 
 
 Melodia* criaMelodias(int tamMusica, int tamPadrao){
@@ -61,7 +64,7 @@ Melodia* criaMelodias(int tamMusica, int tamPadrao){
     //BMH
     m->intervalosPadrao = (int*)calloc(tamPadrao-1, sizeof(int));
     m->intervalosMusica = (int*)calloc(tamMusica-1, sizeof(int));
-    m->mascara = (int*)calloc(12, sizeof(int));
+    m->mascara = (int*)calloc(13, sizeof(int));
     return m;
 }
 
@@ -157,7 +160,32 @@ int KMP(Melodia* melodia){
     return -1;
 }
 
+void criaMascara(Melodia* melodia){
+    int j;
+    for(j = 0; j < 13; j++)
+        melodia->mascara[j] = melodia->tamPadrao-1;
+    for(j = 1; j < melodia->tamPadrao-1; j++)
+        melodia->mascara[6+melodia->intervalosPadrao[j-1]] = melodia->tamPadrao-1-j;
+}
+
 int BMH(Melodia* melodia){
+    if(melodia == NULL)
+        return -1;
+    criaMascara(melodia);
+    
+    int i = melodia->tamPadrao-1;
+    while(i <= melodia->tamMusica-1){
+        int k = i;
+        int j = melodia->tamPadrao-1;
+        while(j > 0 && melodia->intervalosPadrao[j-1] == melodia->intervalosMusica[k-1]){
+            k--;
+            j--;
+        }
+        if(j == 0){
+            return k;
+        }
+        i += melodia->mascara[6+melodia->intervalosMusica[i-1]];
+    }
     
     return -1;
 }

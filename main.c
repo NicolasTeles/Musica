@@ -19,15 +19,14 @@ int main(int argc, char* argv[]){
         Melodia* melodia = leMelodia(fe);
         if(melodia == NULL)
             break;
-        printf("\n\n\n");
-        int index = KMP(melodia);
-
-
-        printf("LPS = ");
-
-        for(int i = 0; i < melodia->tamPadrao; i++)
-            printf("%d ", melodia->LPS[i]);
+        int index = BMH(melodia);
         printf("\n");
+
+        // printf("LPS = ");
+
+        // for(int i = 0; i < melodia->tamPadrao; i++)
+        //     printf("%d ", melodia->LPS[i]);
+        // printf("\n");
 
         printaResultado(fs, index);
         printf("%d\n", index);

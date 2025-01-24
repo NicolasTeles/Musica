@@ -2,7 +2,7 @@
 #define LOGICA_H
 
 #include <stdio.h>
-
+#define MAX_ALFABETO = 12
 /*typedef enum notas{
     A = 1,
     B = 3,
@@ -44,5 +44,9 @@ int distanciaMin(int diff);
 void criaLPS(Melodia* melodia);
 
 int KMP(Melodia* melodia);
+
+void criaMascara(Melodia* melodia);
+
+int BMH(Melodia* melodia);
 
 #endif
