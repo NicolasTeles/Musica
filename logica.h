@@ -14,9 +14,11 @@
 }Notas;*/
 
 typedef struct melodia{
-    //BMH
+    //BMH e Shift-And
     int* intervalosMusica;
+    int tamIntervaloMusica;
     int* intervalosPadrao;
+    int tamIntervaloPadrao;
     int* mascara;
     
     //KMP
@@ -48,5 +50,7 @@ int KMP(Melodia* melodia);
 void criaMascara(Melodia* melodia);
 
 int BMH(Melodia* melodia);
+
+int shiftAnd(Melodia* melodia);
 
 #endif

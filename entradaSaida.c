@@ -36,6 +36,12 @@ Melodia* leMelodia(FILE* fp){
         return NULL;
     leLinha(melodia, fp, melodia->tamMusica, 'm');
     leLinha(melodia, fp, melodia->tamPadrao, 'p');
+    // for(int i = 0; i < melodia->tamMusica-1; i++)
+    //     printf("%d ", melodia->intervalosMusica[i]);
+    // printf("\n");
+    // for(int i = 0; i < melodia->tamPadrao-1; i++)
+    //     printf("%d ", melodia->intervalosPadrao[i]);
+    // printf("\n");
     return melodia;
 }
 

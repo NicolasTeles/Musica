@@ -61,9 +61,11 @@ Melodia* criaMelodias(int tamMusica, int tamPadrao){
     //KMP
     m->LPS = (int*)calloc(tamPadrao, sizeof(int));
 
-    //BMH
+    //BMH e Shift-And
     m->intervalosPadrao = (int*)calloc(tamPadrao-1, sizeof(int));
+    m->tamIntervaloPadrao = tamPadrao-1;
     m->intervalosMusica = (int*)calloc(tamMusica-1, sizeof(int));
+    m->tamIntervaloMusica = tamMusica-1;
     m->mascara = (int*)calloc(13, sizeof(int));
     return m;
 }
@@ -187,5 +189,31 @@ int BMH(Melodia* melodia){
         i += melodia->mascara[6+melodia->intervalosMusica[i-1]];
     }
     
+    return -1;
+}
+
+int shiftAnd(Melodia* melodia){
+    if(melodia == NULL)
+        return -1;
+    //define as mascaras
+    int i;
+    int m = melodia->tamIntervaloPadrao;
+    int j = m-1;
+    for(i = 0; i < 13; i++)
+        melodia->mascara[i] = 0;
+    i = 0;
+    while(i < m){
+        melodia->mascara[melodia->intervalosPadrao[i]] |= (1 << j);
+        i++;
+        j--;
+    }
+    //procura o plagio
+    int r = 0;
+    for(i = 0; i < melodia->tamIntervaloMusica; i++){
+        r = ((r >> 1) | (1 << (m-1))) & melodia->mascara[melodia->intervalosMusica[i]];
+        if(r%2 == 1){
+            return i - (m-1);
+        }
+    }
     return -1;
 }
