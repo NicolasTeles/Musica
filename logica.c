@@ -217,3 +217,32 @@ int shiftAnd(Melodia* melodia){
     }
     return -1;
 }
+
+int achePlagio(Melodia* melodia, int tipo){
+    if(melodia == NULL)
+        return -1;
+    int retorno = -1;
+    switch (tipo)
+    {
+    case 1:
+        printf("feito por Força Bruta\n");
+        retorno = forcaBruta(melodia);
+        break;
+    case 2:
+        printf("feito por KMP\n");
+        retorno = KMP(melodia);
+        break;
+    case 3:
+        printf("feito por BMH\n");
+        retorno = BMH(melodia);
+        break;
+    case 4:
+        printf("feito por Shift-And\n");
+        retorno = shiftAnd(melodia);
+        break;
+    default:
+        printf("Tipo inválido\n");
+        break;
+    }
+    return retorno;   
+}

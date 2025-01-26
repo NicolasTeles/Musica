@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
         Melodia* melodia = leMelodia(fe);
         if(melodia == NULL)
             break;
-        int index = shiftAnd(melodia);
+        int index = achePlagio(melodia, tipo);
         printf("\n");
 
         // printf("LPS = ");

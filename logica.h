@@ -53,4 +53,6 @@ int BMH(Melodia* melodia);
 
 int shiftAnd(Melodia* melodia);
 
+int achePlagio(Melodia* melodia, int tipo);
+
 #endif
