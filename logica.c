@@ -222,8 +222,7 @@ int achePlagio(Melodia* melodia, int tipo){
     if(melodia == NULL)
         return -1;
     int retorno = -1;
-    switch (tipo)
-    {
+    switch (tipo){
     case 1:
         printf("feito por Força Bruta\n");
         retorno = forcaBruta(melodia);
@@ -242,6 +241,7 @@ int achePlagio(Melodia* melodia, int tipo){
         break;
     default:
         printf("Tipo inválido\n");
+        retorno = -2;
         break;
     }
     return retorno;   

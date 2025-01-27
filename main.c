@@ -21,6 +21,10 @@ int main(int argc, char* argv[]){
             break;
         int index = achePlagio(melodia, tipo);
         printf("\n");
+        if(index == -2){
+            destroiMelodia(melodia);
+            break;
+        }
 
         // printf("LPS = ");
 
