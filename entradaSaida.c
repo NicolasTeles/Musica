@@ -70,10 +70,10 @@ Melodia* leMelodia(FILE* fp){
     return melodia;
 }
 
-void printaResultado(FILE* fp, int index){
+void printaResultado(int index){
     if(index == -1)
-        fprintf(fp, "N\n");
+        printf("N\n");
     if(index >= 0)
-        fprintf(fp, "S %d\n", index);
+        printf("S %d\n", index);
     
 }

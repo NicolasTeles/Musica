@@ -224,19 +224,19 @@ int achePlagio(Melodia* melodia, int tipo){
     int retorno = -1;
     switch (tipo){
     case 1:
-        printf("feito por Força Bruta\n");
+        //printf("feito por Força Bruta\n");
         retorno = forcaBruta(melodia);
         break;
     case 2:
-        printf("feito por KMP\n");
+       // printf("feito por KMP\n");
         retorno = KMP(melodia);
         break;
     case 3:
-        printf("feito por BMH\n");
+        //printf("feito por BMH\n");
         retorno = BMH(melodia);
         break;
     case 4:
-        printf("feito por Shift-And\n");
+        //printf("feito por Shift-And\n");
         retorno = shiftAnd(melodia);
         break;
     default:
