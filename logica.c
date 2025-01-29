@@ -18,6 +18,10 @@ Melodia* obtemTamanhoMelodia(FILE* fp){
 
     if(tamanhoMusica == 0 && tamanhoPadrao == 0)
         return NULL;
+    
+    if(tamanhoMusica < tamanhoPadrao)
+        exit(1);
+    
 
     return criaMelodias(tamanhoMusica, tamanhoPadrao);
 }
@@ -71,6 +75,8 @@ Melodia* criaMelodias(int tamMusica, int tamPadrao){
 }
 
 void destroiMelodia(Melodia* m){
+    if(m == NULL)
+        return;
     //KMP
     free(m->LPS);
 
@@ -199,6 +205,8 @@ int shiftAnd(Melodia* melodia){
     int i;
     int m = melodia->tamIntervaloPadrao;
     int j = m-1;
+    if(m > 64)
+        return -3;
     for(i = 0; i < 13; i++)
         melodia->mascara[i] = 0;
     i = 0;
@@ -241,8 +249,7 @@ int achePlagio(Melodia* melodia, int tipo){
         break;
     default:
         printf("Tipo inválido\n");
-        retorno = -2;
-        break;
+        exit(1);
     }
     return retorno;   
 }

@@ -5,8 +5,8 @@
 #include "logica.h"
 
 void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
-    char string[500];
-    fgets(string, 500, fp);
+    char string[10000];
+    fgets(string, 10000, fp);
     char* token = strtok(string, " ");
     int i;
     for(i = 0;  ; i++){
@@ -43,7 +43,7 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
     printf("\nTamanho de ");
 
     if(caractere == 'm')
-        printf("melodia ");
+        printf("musica ");
     if(caractere == 'p')
         printf("padrao ");
 
@@ -56,6 +56,7 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
     printf("i=%d tam=%d\n", i, tam);
     destroiMelodia(melodia);
     exit(1);
+    melodia = NULL;
 }
 
 Melodia* leMelodia(FILE* fp){
@@ -74,6 +75,8 @@ Melodia* leMelodia(FILE* fp){
 }
 
 void printaResultado(int index, FILE* fs){
+    if(index == -3)
+        fprintf(fs, "Tamanho do padrão maior que 65 no shift-and\n");
     if(index == -1)
         fprintf(fs, "N\n");
     if(index >= 0)
