@@ -10,8 +10,10 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
     char* token = strtok(string, " ");
     int i;
     for(i = 0;  ; i++){
-        if(token == NULL)
+        if(token == NULL){
+            printf("i: %d\n", i);
             break;
+        }
         if(i == tam){
             i = tam+1;
             break;
@@ -51,6 +53,7 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
         printf("maior ");
     
     printf("que o esperado!\n");
+    printf("i=%d tam=%d\n", i, tam);
     destroiMelodia(melodia);
     exit(1);
 }
@@ -70,10 +73,10 @@ Melodia* leMelodia(FILE* fp){
     return melodia;
 }
 
-void printaResultado(int index){
+void printaResultado(int index, FILE* fs){
     if(index == -1)
-        printf("N\n");
+        fprintf(fs, "N\n");
     if(index >= 0)
-        printf("S %d\n", index);
+        fprintf(fs, "S %d\n", index);
     
 }

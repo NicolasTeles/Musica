@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "entradaSaida.h"
 #include "logica.h"
+#include <sys/time.h>
 #include <sys/resource.h>
 
 void calculaTempoProcessador(struct rusage usage){
@@ -69,7 +70,7 @@ int main(int argc, char* argv[]){
         //     printf("%d ", melodia->LPS[i]);
         // printf("\n");
 
-        printaResultado(index);
+        printaResultado(index, fs);
         // printf("%d\n", index);
         // for(int i = 0; i < melodia->tamMusica; i++)
         //     printf("%d ", melodia->musica[i]);

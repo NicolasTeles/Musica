@@ -66,7 +66,7 @@ Melodia* criaMelodias(int tamMusica, int tamPadrao){
     m->tamIntervaloPadrao = tamPadrao-1;
     m->intervalosMusica = (int*)calloc(tamMusica-1, sizeof(int));
     m->tamIntervaloMusica = tamMusica-1;
-    m->mascara = (int*)calloc(13, sizeof(int));
+    m->mascara = (long*)calloc(13, sizeof(long));
     return m;
 }
 
@@ -203,14 +203,14 @@ int shiftAnd(Melodia* melodia){
         melodia->mascara[i] = 0;
     i = 0;
     while(i < m){
-        melodia->mascara[melodia->intervalosPadrao[i]] |= (1 << j);
+        melodia->mascara[6+melodia->intervalosPadrao[i]] |= (1 << j);
         i++;
         j--;
     }
     //procura o plagio
     int r = 0;
     for(i = 0; i < melodia->tamIntervaloMusica; i++){
-        r = ((r >> 1) | (1 << (m-1))) & melodia->mascara[melodia->intervalosMusica[i]];
+        r = ((r >> 1) | (1 << (m-1))) & melodia->mascara[6+melodia->intervalosMusica[i]];
         if(r%2 == 1){
             return i - (m-1);
         }

@@ -8,6 +8,6 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caracter);
 
 Melodia* leMelodia(FILE* fp);
 
-void printaResultado(int index);
+void printaResultado(int index, FILE* fs);
 
 #endif
