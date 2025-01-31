@@ -5,8 +5,8 @@
 #include "logica.h"
 
 Melodia* obtemTamanhoMelodia(FILE* fp){
-    char string[10];
-    fgets(string, 10, fp);
+    char string[50];
+    fgets(string, 50, fp);
     char* token = strtok(string, " ");
     //printf("str=%s\n", token);
     int tamanhoMusica = atoi(token);
@@ -43,11 +43,13 @@ int converteNota(char nota) {
         case 'G': 
             return 11;
         default:
-            printf("Nota inválida");
+            printf("nota=%c\n", nota);
+            printf("Nota inválida\n");
             exit(1);
     }
 }
 
+// Calcula se essa distância é o menor módulo ou o seu complementar, para aceitar o ciclo.
 int distanciaMin(int diff){
     int absDiff = abs(diff);
     int multiplicador;
@@ -73,8 +75,17 @@ Melodia* criaMelodias(int tamMusica, int tamPadrao){
     m->tamIntervaloPadrao = tamPadrao-1;
     m->intervalosMusica = (int*)calloc(tamMusica-1, sizeof(int));
     m->tamIntervaloMusica = tamMusica-1;
-    //m->mascara = (long*)calloc(13, sizeof(long));
     m->tabelaDeslocamento = (int*)calloc(13, sizeof(int));
+    
+    //Shift-And
+    //Essa parte é para saber se o tamanho ultrapassa 64 bits para criar outro vetor para compor ao fazer o shift
+    int n = (int)(tamPadrao-1)/64;
+    if(((tamPadrao-1)%64) > 0)
+        n++;
+    m->linhaMascara = n;
+    m->mascara = (long**)calloc(n, sizeof(long*));
+    for(int i=0; i < n; i++)
+        m->mascara[i] = (long*)calloc(13, sizeof(long));
     return m;
 }
 
@@ -89,12 +100,18 @@ void destroiMelodia(Melodia* m){
     free(m->intervalosMusica);
     free(m->tabelaDeslocamento);
 
+    //Shift-And
+    for(int i = 0; i < m->linhaMascara; i++){
+        free(m->mascara[i]);
+        m->mascara[i] = NULL;
+    }
+    free(m->mascara);
+
     free(m->musica);
     free(m->padrao);
     free(m);
 }
 
-// pos atual + tam padrao > tam musica -> parar loop
 int forcaBruta(Melodia* melodia){
     int index = 0;
     int diferenca;
@@ -124,8 +141,8 @@ void criaLPS(Melodia* melodia){
     int len = 0;
 
     int i = 1;
-    while(i < melodia->tamPadrao){
-        if(melodia->padrao[i] == melodia->padrao[len]){
+    while(i < melodia->tamIntervaloPadrao){
+        if(melodia->intervalosPadrao[i] == melodia->intervalosPadrao[len]){
             len++;
             melodia->LPS[i] = len;
             i++;
@@ -144,14 +161,11 @@ int KMP(Melodia* melodia){
     criaLPS(melodia);
     
     int i = 0, j = 0;
-    while(i < melodia->tamMusica){
-        if(j == melodia->tamPadrao)
-            return i - melodia->tamPadrao;
+    while(i < melodia->tamIntervaloMusica){
+        if(j == melodia->tamIntervaloPadrao)
+            return i - melodia->tamIntervaloPadrao;
 
-        int diferencaAtual = distanciaMin(melodia->musica[i] - melodia->padrao[j]);
-        int diferenca = distanciaMin(melodia->musica[i - j] - melodia->padrao[0]);
-
-        if(diferenca == diferencaAtual){
+        if(melodia->intervalosMusica[i] == melodia->intervalosPadrao[j]){
             i++;
             j++;
         } else {
@@ -163,8 +177,8 @@ int KMP(Melodia* melodia){
         }
     }
 
-    if(j == melodia->tamPadrao)
-        return i - melodia->tamPadrao;
+    if(j == melodia->tamIntervaloPadrao)
+        return i - melodia->tamIntervaloPadrao;
 
     return -1;
 }
@@ -172,9 +186,9 @@ int KMP(Melodia* melodia){
 void criaTabelaDeslocamentos(Melodia* melodia){
     int j;
     for(j = 0; j < 13; j++)
-        melodia->tabelaDeslocamento[j] = melodia->tamPadrao-1;
-    for(j = 1; j < melodia->tamPadrao-1; j++)
-        melodia->tabelaDeslocamento[6+melodia->intervalosPadrao[j-1]] = melodia->tamPadrao-1-j;
+        melodia->tabelaDeslocamento[j] = melodia->tamIntervaloPadrao;
+    for(j = 1; j < melodia->tamIntervaloPadrao; j++)
+        melodia->tabelaDeslocamento[6+melodia->intervalosPadrao[j-1]] = melodia->tamIntervaloPadrao-j;
 }
 
 int BMH(Melodia* melodia){
@@ -182,10 +196,10 @@ int BMH(Melodia* melodia){
         return -1;
     criaTabelaDeslocamentos(melodia);
     
-    int i = melodia->tamPadrao-1;
+    int i = melodia->tamIntervaloPadrao;
     while(i <= melodia->tamMusica-1){
         int k = i;
-        int j = melodia->tamPadrao-1;
+        int j = melodia->tamIntervaloPadrao;
         while(j > 0 && melodia->intervalosPadrao[j-1] == melodia->intervalosMusica[k-1]){
             k--;
             j--;
@@ -199,33 +213,57 @@ int BMH(Melodia* melodia){
     return -1;
 }
 
-// int shiftAnd(Melodia* melodia){
-//     if(melodia == NULL)
-//         return -1;
-//     //define as mascaras
-//     int i;
-//     int m = melodia->tamIntervaloPadrao;
-//     int j = m-1;
-//     if(m > 64)
-//         return -3;
-//     for(i = 0; i < 13; i++)
-//         melodia->mascara[i] = 0;
-//     i = 0;
-//     while(i < m){
-//         melodia->mascara[6+melodia->intervalosPadrao[i]] |= (1 << j);
-//         i++;
-//         j--;
-//     }
-//     //procura o plagio
-//     int r = 0;
-//     for(i = 0; i < melodia->tamIntervaloMusica; i++){
-//         r = ((r >> 1) | (1 << (m-1))) & melodia->mascara[6+melodia->intervalosMusica[i]];
-//         if(r%2 == 1){
-//             return i - (m-1);
-//         }
-//     }
-//     return -1;
-// }
+int shiftAnd(Melodia* melodia){
+    if(melodia == NULL)
+        return -1;
+    //define as mascaras
+    int i, k;
+    int m = melodia->tamIntervaloPadrao;
+    int j = (melodia->tamIntervaloPadrao%64)-1;
+    for(k = 0; k < melodia->linhaMascara; k++)
+        for(i = 0; i < 13; i++)
+            melodia->mascara[k][i] = 0;
+    i=0;
+    while(i < m){
+        for(k = 0; k < melodia->linhaMascara; k++){
+            for(; j>=0; j--){
+                melodia->mascara[k][6+melodia->intervalosPadrao[i]] |= (1L << j);
+                i++;
+            }
+            j = 63;
+        }
+    }   
+    //procura o plagio
+    j = (melodia->tamIntervaloPadrao%64)-1;
+    long* r = (long*)calloc(melodia->linhaMascara, sizeof(long)); //vetor R que é feito para suportar tamanho do padrão maior que 65
+    bool* boolean = (bool*)calloc(melodia->linhaMascara, sizeof(bool)); //vetor que vai verificar se anteriormente o LSB do anterior estava setado e com isso o MSB do atual deve ser setado
+    for(k = 0; k < melodia->linhaMascara; k++)
+        boolean[k] = false;
+    for(i = 0; i < melodia->tamIntervaloMusica; i++){
+        for(k = 0; k < melodia->linhaMascara; k++){
+            if(boolean[k]){
+                r[k] |= (1L << 63);
+                boolean[k] = false;
+            }
+            if(k == 0){
+                r[k] = ((r[k] >> 1) | (1L << j)) & melodia->mascara[k][6+melodia->intervalosMusica[i]];
+            }
+            else 
+                r[k] = ((r[k] >> 1)) & melodia->mascara[k][6+melodia->intervalosMusica[i]];
+            
+            if((k != 0) && (r[k-1]%2 == 1))
+                boolean[k] = true;
+        }
+        if(r[melodia->linhaMascara-1]%2 == 1){
+            free(r);
+            free(boolean);
+            return i - (m-1);
+        }
+    }
+    free(r);
+    free(boolean);
+    return -1;
+}
 
 int achePlagio(Melodia* melodia, int tipo){
     if(melodia == NULL)
@@ -246,7 +284,7 @@ int achePlagio(Melodia* melodia, int tipo){
         break;
     case 4:
         //printf("feito por Shift-And\n");
-        //retorno = shiftAnd(melodia);
+        retorno = shiftAnd(melodia);
         break;
     default:
         printf("Tipo inválido\n");

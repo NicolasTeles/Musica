@@ -20,6 +20,7 @@ typedef struct melodia{
     int* intervalosPadrao;
     int tamIntervaloPadrao;
     long** mascara;
+    int linhaMascara;
     int* tabelaDeslocamento;
     //KMP
     int* LPS;

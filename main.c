@@ -51,6 +51,7 @@ int main(int argc, char* argv[]){
         printf("Erro na abertura do arquivo de entrada!\n");
         return 0;
     }
+    printf("Tamanho de long: %zu bytes\n", sizeof(long));
     while(1){
         gettimeofday(&start, NULL);
         if(feof(fe))

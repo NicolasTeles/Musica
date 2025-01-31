@@ -5,8 +5,8 @@
 #include "logica.h"
 
 void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
-    char string[10000];
-    fgets(string, 10000, fp);
+    char* string = (char*)calloc(melodia->tamMusica*3, sizeof(char));
+    fgets(string, melodia->tamMusica*3, fp);
     char* token = strtok(string, " ");
     int i;
     for(i = 0;  ; i++){
@@ -27,19 +27,28 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
 
         if(caractere == 'm'){
             melodia->musica[i] = nota;
-            if(i > 0)
+            if(i > 0){
                 melodia->intervalosMusica[i-1] = distanciaMin(melodia->musica[i] - melodia->musica[i-1]);
+                // contabilizar que subir e descer 6 meio-tons é a mesma coisa
+                if(melodia->intervalosMusica[i-1] == -6)
+                    melodia->intervalosMusica[i-1] = 6;
+            }
         }
         if(caractere == 'p'){
             melodia->padrao[i] = nota;
-            if(i > 0)
+            if(i > 0){
                 melodia->intervalosPadrao[i-1] = distanciaMin(melodia->padrao[i] - melodia->padrao[i-1]);
+                // contabilizar que subir e descer 6 meio-tons é a mesma coisa
+                if(melodia->intervalosPadrao[i-1] == -6)
+                    melodia->intervalosPadrao[i-1] = 6;
+            }
         }
         token = strtok(NULL, " ");
     }
-    if(i == tam)
+    if(i == tam){
+        free(string);
         return;
-
+    }
     printf("\nTamanho de ");
 
     if(caractere == 'm')
@@ -55,6 +64,7 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
     printf("que o esperado!\n");
     printf("i=%d tam=%d\n", i, tam);
     destroiMelodia(melodia);
+    free(string);
     exit(1);
     melodia = NULL;
 }
@@ -75,8 +85,6 @@ Melodia* leMelodia(FILE* fp){
 }
 
 void printaResultado(int index, FILE* fs){
-    if(index == -3)
-        fprintf(fs, "Tamanho do padrão maior que 65 no shift-and\n");
     if(index == -1)
         fprintf(fs, "N\n");
     if(index >= 0)
