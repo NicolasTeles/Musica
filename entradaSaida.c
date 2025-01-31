@@ -11,10 +11,8 @@ void leLinha(Melodia* melodia, FILE* fp, FILE* fs, int tam, char caractere, bool
     char* token = strtok(string, " ");
     int i;
     for(i = 0;  ; i++){
-        if(token == NULL){
-            printf("i: %d\n", i);
+        if(token == NULL)
             break;
-        }
         if(i == tam){
             i = tam+1;
             break;
