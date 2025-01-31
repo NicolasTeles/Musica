@@ -69,20 +69,7 @@ int main(int argc, char* argv[]){
             break;
         }
 
-        // printf("LPS = ");
-
-        // for(int i = 0; i < melodia->tamPadrao; i++)
-        //     printf("%d ", melodia->LPS[i]);
-        // printf("\n");
-
         printaResultado(index, fs);
-        // printf("%d\n", index);
-        // for(int i = 0; i < melodia->tamMusica; i++)
-        //     printf("%d ", melodia->musica[i]);
-        // printf("\n");
-        // for(int i = 0; i < melodia->tamPadrao; i++)
-        //     printf("%d ", melodia->padrao[i]);
-        // printf("\n");
 
 
         destroiMelodia(melodia);

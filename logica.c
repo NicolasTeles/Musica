@@ -9,13 +9,9 @@ Melodia* obtemTamanhoMelodia(FILE* fp, FILE* fs, bool* excecao){
     char string[50];
     fgets(string, 50, fp);
     char* token = strtok(string, " ");
-    //printf("str=%s\n", token);
     int tamanhoMusica = atoi(token);
-    //printf("%d\n", tamanhoMusica);
     token = strtok(NULL, " ");
-    //printf("str=%s\n", token);
     int tamanhoPadrao = atoi(token);
-    //printf("int=%d\n\n", tamanhoPadrao);
 
     if(tamanhoMusica == 0 && tamanhoPadrao == 0)
         return NULL;
@@ -273,24 +269,20 @@ int achePlagio(Melodia* melodia, int tipo){
     int retorno = -1;
     switch (tipo){
     case 1:
-        //printf("feito por Força Bruta\n");
         retorno = forcaBruta(melodia);
         break;
     case 2:
-       // printf("feito por KMP\n");
         retorno = KMP(melodia);
         break;
     case 3:
-        //printf("feito por BMH\n");
         retorno = BMH(melodia);
         break;
     case 4:
-        //printf("feito por Shift-And\n");
         retorno = shiftAnd(melodia);
         break;
     default:
         printf("Tipo inválido\n");
-        exit(1);
+        return -2;
     }
     return retorno;   
 }
