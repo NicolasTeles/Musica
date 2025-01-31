@@ -4,30 +4,30 @@
 
 FILE* escreverEntradas(FILE* arquivo, int quantidade) {
     //essa string aq e o trecho original, da pra alterar mas vai ter que mudar no programa inteiro
-    char original[3] = {"AB"};
+    char original[400] = {"A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A B"};
 
-    fprintf(arquivo, "%d 2\n", quantidade); 
+    fprintf(arquivo, "%d 200\n", quantidade); 
 
-    for (int i = 0; i < quantidade-2; i++) { 
+    for (int i = 0; i < quantidade-200; i++) { 
         fprintf(arquivo, "A ");
     }
 
-    for (int i = 0; i < 2; i++) {
-        if(i == 1){
-            fprintf(arquivo, "%c", original[i]);
-        }else{
-            fprintf(arquivo, "%c ", original[i]);
-        }
-    }
+    //for (int i = 0; i < 2; i++) {
+        //if(i == 1){
+            fprintf(arquivo, "%s", original);
+        //}else{
+           // fprintf(arquivo, "%c ", original[i]);
+        //}
+    //}
     fprintf(arquivo, "\n");
 
-    for (int i = 0; i < 2; i++) {
-        if(i == 1){
-            fprintf(arquivo, "%c", original[i]);
-        }else{
-            fprintf(arquivo, "%c ", original[i]);
-        }
-    }
+    //for (int i = 0; i < 2; i++) {
+        //if(i == 1){
+            fprintf(arquivo, "%s", original);
+        //}else{
+            //fprintf(arquivo, "%c ", original[i]);
+       // }
+    //}
     fprintf(arquivo, "\n");
     
 }

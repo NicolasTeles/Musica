@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "entradaSaida.h"
 #include "logica.h"
 
-void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
+void leLinha(Melodia* melodia, FILE* fp, FILE* fs, int tam, char caractere, bool* excecao){
     char* string = (char*)calloc(melodia->tamMusica*3, sizeof(char));
     fgets(string, melodia->tamMusica*3, fp);
     char* token = strtok(string, " ");
@@ -19,6 +20,11 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
             break;
         }
         int nota = converteNota(token[0]);
+        if(nota == -1){
+            notaInvalida(melodia, fp, fs, token[0], caractere, excecao);
+            i = tam;
+            break;
+        }
         if(strlen(token) > 1)
             if(token[1] == 'b')
                 nota--;
@@ -49,32 +55,26 @@ void leLinha(Melodia* melodia, FILE* fp, int tam, char caractere){
         free(string);
         return;
     }
-    printf("\nTamanho de ");
-
-    if(caractere == 'm')
-        printf("musica ");
-    if(caractere == 'p')
-        printf("padrao ");
-
-    if(i < tam)
-        printf("menor ");
-    if(i > tam)
-        printf("maior ");
-    
-    printf("que o esperado!\n");
-    printf("i=%d tam=%d\n", i, tam);
-    destroiMelodia(melodia);
+    tamanhoInvalido(melodia, fp, fs, i, tam, caractere, excecao);
     free(string);
-    exit(1);
-    melodia = NULL;
 }
 
-Melodia* leMelodia(FILE* fp){
-    Melodia* melodia = obtemTamanhoMelodia(fp);
+Melodia* leMelodia(FILE* fp, FILE* fs, bool* excecao){
+    Melodia* melodia = obtemTamanhoMelodia(fp, fs, excecao);
     if(melodia == NULL)
         return NULL;
-    leLinha(melodia, fp, melodia->tamMusica, 'm');
-    leLinha(melodia, fp, melodia->tamPadrao, 'p');
+    leLinha(melodia, fp, fs,  melodia->tamMusica, 'm', excecao);
+    if((*excecao)){
+        destroiMelodia(melodia);
+        melodia = NULL;
+        return NULL;
+    }
+    leLinha(melodia, fp, fs, melodia->tamPadrao, 'p', excecao);
+    if((*excecao)){
+        destroiMelodia(melodia);
+        melodia = NULL;
+        return NULL;
+    }
     // for(int i = 0; i < melodia->tamMusica-1; i++)
     //     printf("%d ", melodia->intervalosMusica[i]);
     // printf("\n");
@@ -90,4 +90,43 @@ void printaResultado(int index, FILE* fs){
     if(index >= 0)
         fprintf(fs, "S %d\n", index);
     
+}
+
+// Funções para Tratamento de Exceções
+void padraoMaior(FILE* fp, FILE* fs, int tamPadrao, bool* excecao){
+    char* string = (char*)calloc(tamPadrao*3, sizeof(char));
+    fgets(string,tamPadrao*3 , fp);
+    fgets(string,tamPadrao*3 , fp);
+    fprintf(fs, "Tamanho do padrão maior que a música!\n");
+    *excecao = true;
+    free(string);
+}
+
+void notaInvalida(Melodia* m, FILE* fp, FILE* fs, char nota, char caractere,bool* excecao){
+    char* string = (char*)calloc(m->tamMusica*3, sizeof(char));
+    if(caractere == 'm')
+        fgets(string, m->tamMusica*3, fp);
+    fprintf(fs,"Nota %c inválida!\n", nota);
+    *excecao = true;
+    free(string);
+}
+
+void tamanhoInvalido(Melodia*m, FILE* fp, FILE* fs, int index, int tam, char caractere, bool* excecao){
+    char* string = (char*)calloc(m->tamMusica*3, sizeof(char));
+    if(caractere == 'm')
+        fgets(string, m->tamMusica*3, fp);
+    fprintf(fs,"Tamanho de ");
+
+    if(caractere == 'm')
+        fprintf(fs,"musica ");
+    if(caractere == 'p')
+        fprintf(fs,"padrao ");
+
+    if(index < tam)
+        fprintf(fs,"menor ");
+    if(index > tam)
+        fprintf(fs,"maior ");
+    fprintf(fs, "que o esperado!\n");
+    *excecao = true;
+    free(string);
 }

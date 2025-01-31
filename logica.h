@@ -32,7 +32,7 @@ typedef struct melodia{
 }Melodia;
 
 
-Melodia* obtemTamanhoMelodia(FILE* fp);
+Melodia* obtemTamanhoMelodia(FILE* fp, FILE* fs, bool* excecao);
 
 int converteNota(char nota);
 

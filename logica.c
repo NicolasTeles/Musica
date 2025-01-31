@@ -3,8 +3,9 @@
 #include <stdbool.h>
 #include <string.h>
 #include "logica.h"
+#include "entradaSaida.h"
 
-Melodia* obtemTamanhoMelodia(FILE* fp){
+Melodia* obtemTamanhoMelodia(FILE* fp, FILE* fs, bool* excecao){
     char string[50];
     fgets(string, 50, fp);
     char* token = strtok(string, " ");
@@ -19,8 +20,11 @@ Melodia* obtemTamanhoMelodia(FILE* fp){
     if(tamanhoMusica == 0 && tamanhoPadrao == 0)
         return NULL;
     
-    if(tamanhoMusica < tamanhoPadrao)
-        exit(1);
+    if(tamanhoMusica < tamanhoPadrao){
+        padraoMaior(fp, fs, tamanhoPadrao, excecao);
+        return NULL;
+    }
+        
     
 
     return criaMelodias(tamanhoMusica, tamanhoPadrao);
@@ -43,9 +47,7 @@ int converteNota(char nota) {
         case 'G': 
             return 11;
         default:
-            printf("nota=%c\n", nota);
-            printf("Nota inválida\n");
-            exit(1);
+            return -1;
     }
 }
 
@@ -219,15 +221,15 @@ int shiftAnd(Melodia* melodia){
     //define as mascaras
     int i, k;
     int m = melodia->tamIntervaloPadrao;
-    int j = (melodia->tamIntervaloPadrao%64)-1;
-    for(k = 0; k < melodia->linhaMascara; k++)
-        for(i = 0; i < 13; i++)
+    int j = (melodia->tamIntervaloPadrao%64)-1; 
+    for(k = 0; k < melodia->linhaMascara; k++)//separa o vetor com a divisão do tamanho do padrão para suportar mais que 64 de tamamnho
+        for(i = 0; i < 13; i++) //para cada diferença existente
             melodia->mascara[k][i] = 0;
     i=0;
     while(i < m){
         for(k = 0; k < melodia->linhaMascara; k++){
             for(; j>=0; j--){
-                melodia->mascara[k][6+melodia->intervalosPadrao[i]] |= (1L << j);
+                melodia->mascara[k][6+melodia->intervalosPadrao[i]] |= (1L << j); //lê a diferença e coloca 1 na sua posição correspondente
                 i++;
             }
             j = 63;
@@ -238,23 +240,23 @@ int shiftAnd(Melodia* melodia){
     long* r = (long*)calloc(melodia->linhaMascara, sizeof(long)); //vetor R que é feito para suportar tamanho do padrão maior que 65
     bool* boolean = (bool*)calloc(melodia->linhaMascara, sizeof(bool)); //vetor que vai verificar se anteriormente o LSB do anterior estava setado e com isso o MSB do atual deve ser setado
     for(k = 0; k < melodia->linhaMascara; k++)
-        boolean[k] = false;
+        boolean[k] = false; //inicializa todos como false
     for(i = 0; i < melodia->tamIntervaloMusica; i++){
         for(k = 0; k < melodia->linhaMascara; k++){
-            if(boolean[k]){
-                r[k] |= (1L << 63);
+            if(boolean[k]){ //verifica se no shift anterior se o LSB do seu antecessor tava setado
+                r[k] |= (1L << 63); //complementa com 1 no seu MSB
                 boolean[k] = false;
             }
-            if(k == 0){
+            if(k == 0){ //shift complementa com 1 e faz and com a mascara
                 r[k] = ((r[k] >> 1) | (1L << j)) & melodia->mascara[k][6+melodia->intervalosMusica[i]];
             }
-            else 
+            else //se não for o k=0 só precisa shiftar e fazer and
                 r[k] = ((r[k] >> 1)) & melodia->mascara[k][6+melodia->intervalosMusica[i]];
             
-            if((k != 0) && (r[k-1]%2 == 1))
+            if((k != 0) && (r[k-1]%2 == 1)) //verifica se o LSB do antecessor está setado para que no proximo shift haja o complemento
                 boolean[k] = true;
         }
-        if(r[melodia->linhaMascara-1]%2 == 1){
+        if(r[melodia->linhaMascara-1]%2 == 1){ // verifica se na ultima parte está com o LSB setado, caso esteja encontrou casamento
             free(r);
             free(boolean);
             return i - (m-1);

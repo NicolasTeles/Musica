@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "entradaSaida.h"
 #include "logica.h"
 #include <sys/time.h>
@@ -43,22 +44,25 @@ int main(int argc, char* argv[]){
     FILE* fe = fopen(argv[1], "r");
     struct timeval start, end;
     struct rusage usage;
-
-    //remover arquivo de saida, mantendo assim para ficar mais organizado e ser possivel debugar pelo terminal
+    bool* excecao = (bool*)malloc(sizeof(bool));
+    *excecao = false;
     FILE* fs = fopen("saida.txt", "w");
     int tipo = atoi(argv[2]);
     if(fe == NULL){
         printf("Erro na abertura do arquivo de entrada!\n");
         return 0;
     }
-    printf("Tamanho de long: %zu bytes\n", sizeof(long));
     while(1){
         gettimeofday(&start, NULL);
         if(feof(fe))
             break;
-        Melodia* melodia = leMelodia(fe);
-        if(melodia == NULL)
+        Melodia* melodia = leMelodia(fe, fs, excecao);
+        if(melodia == NULL && !(*excecao))
             break;
+        if(melodia == NULL && (*excecao)){
+            *excecao = false;
+            continue;
+        }
         int index = achePlagio(melodia, tipo);
         if(index == -2){
             destroiMelodia(melodia);
@@ -92,5 +96,6 @@ int main(int argc, char* argv[]){
     }
     fclose(fs);
     fclose(fe);
+    free(excecao);
     return 0;
 }
